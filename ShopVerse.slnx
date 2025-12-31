@@ -15,5 +15,5 @@
     <File Path=".gitignore" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="ApiGetway/ApiGetway.csproj" />
+  <Project Path="ApiGetway/ApiGateway.csproj" />
 </Solution>
