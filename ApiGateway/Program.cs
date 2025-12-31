@@ -7,8 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 var app = builder.Build();
+app.MapReverseProxy();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -24,10 +27,9 @@ if (app.Environment.IsDevelopment())
     {
         options.SpecUrl("/openapi/v1.json");
     });
+    //scalar/
+    app.MapScalarApiReference();
 }
-
-//scalar/
-app.MapScalarApiReference();
 
 app.UseHttpsRedirection();
 
