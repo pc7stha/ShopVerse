@@ -1,4 +1,14 @@
 <Solution>
+  <Folder Name="/BuildingBlocks/">
+    <Project Path="BuildingBlocks.Common/BuildingBlocks.Common.csproj" Id="1db89d9c-9c5f-42e4-a48f-06553b51f087" />
+    <Project Path="BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj" Id="f97cd62c-2508-46b8-b902-2e74d0a70b2b" />
+    <Project Path="BuildingBlocks.Observability/BuildingBlocks.Observability.csproj" Id="13fd35ec-f2cb-4541-9e59-795bb9ebbaca" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="InventoryService/InventoryService.csproj" Id="590f6e19-cea4-44d1-9cc7-7e9914ff4b3b" />
+    <Project Path="OrderService/OrderService.csproj" Id="ec54938c-6b2b-47b0-b66d-879beba989a6" />
+    <Project Path="PaymentService/PaymentService.csproj" Id="edbf0c94-11d3-4495-8b1b-2ad35777c34a" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
