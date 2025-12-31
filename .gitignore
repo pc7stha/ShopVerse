@@ -1,0 +1,173 @@
+# .NET
+*.exe
+*.dll
+*.pdb
+*.mdb
+*.so
+*.dylib
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Rider
+.idea/
+*.sln.iml
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage*.info
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# Chutzpah Test files
+_Chutzpah*
+
+# dotCover
+*.dotCover
+
+# AxoCover
+.axoCover/*
+!.axoCover/settings.json
+
+# Coverlet
+coverage*.opencover.xml
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Mac
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Rider
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Entity Framework
+*.edmx.diagram
+migrations/
+
+# Windows Store app package directories and files
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+*.appx
+*.appxbundle
+*.appxupload
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Docker
+**/docker-compose*.yml.override
+
+# Secrets
+appsettings.*.json
+!appsettings.Development.json
+!appsettings.json
+secrets.json
+*.pfx
+*.p12
+
+# Logs
+*.log
+logs/
+
+# Temp files
+*.tmp
+*.temp
+*.cache
+
+# Publish output
+publish/
+PublishOutput/
+
+# Azure Functions
+.python_packages/
+
+# Local tool manifest
+.config/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# SQL Server files
+*.mdf
+*.ldf
+*.ndf
+
+# SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Redis
+dump.rdb
