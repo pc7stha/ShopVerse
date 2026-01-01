@@ -5,9 +5,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8094
-EXPOSE 8095
+#EXPOSE 8095
 ENV ASPNETCORE_HTTP_PORTS=8094
-ENV ASPNETCORE_HTTPS_PORTS=8095
+#ENV ASPNETCORE_HTTPS_PORTS=8095
 
 
 # This stage is used to build the service project

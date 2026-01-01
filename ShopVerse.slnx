@@ -16,4 +16,7 @@
     <File Path="README.md" />
   </Folder>
   <Project Path="ApiGateway/ApiGateway.csproj" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>

@@ -7,5 +7,8 @@ namespace InventoryService.Controllers;
 public class InventoryController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get() => Ok("Inventory Service Works!");
+    public IActionResult Get()
+    {
+        return Ok("Inventory Service Works!");
+    } //=> Ok("Inventory Service Works!");
 }
