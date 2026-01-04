@@ -7,8 +7,10 @@ services:
       dockerfile: ApiGateway/Dockerfile
     ports:
       - "8085:8085"
+      - "8086:8086"
     environment:
       ASPNETCORE_HTTP_PORTS: 8085
+      ASPNETCORE_HTTPS_PORTS: 8086
     depends_on:
       - orders
       - payments
