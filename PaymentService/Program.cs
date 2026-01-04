@@ -12,6 +12,12 @@ builder.Services.AddAuthentication("Bearer")
         options.Authority = builder.Configuration["Keycloak:Authority"];
         options.Audience = builder.Configuration["Keycloak:Audience"];
         options.RequireHttpsMetadata = false;
+
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidIssuer = "http://localhost:8080/realms/shopverse",
+            ValidateIssuer = true
+        };
     });
 
 builder.Services.AddAuthorization();

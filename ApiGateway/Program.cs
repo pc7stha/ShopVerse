@@ -14,6 +14,14 @@ builder.Services.AddAuthentication("Bearer")
         options.Authority = builder.Configuration["Keycloak:Authority"];
         options.Audience = builder.Configuration["Keycloak:Audience"];
         options.RequireHttpsMetadata = false;
+
+        // Accept tokens issued by localhost (from browser/Postman)
+        // even though we validate against host.docker.internal (from container)
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidIssuer = "http://localhost:8080/realms/shopverse",
+            ValidateIssuer = true
+        };
     });
 
 builder.Services.AddAuthorization();
@@ -26,7 +34,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi().AllowAnonymous();
     //swagger/index.html
     app.UseSwaggerUI(options =>
     {
