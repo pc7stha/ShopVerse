@@ -1,44 +1,68 @@
-version: "3.9"
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: shopverse-keycloak
+    command: start-dev --import-realm
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./docker/keycloak/shopverse-realm.json:/opt/keycloak/data/import/shopverse-realm.json:ro
+
   apigateway:
+    image: shopverse-apigateway
     container_name: ShopVerse
     build:
       context: .
       dockerfile: ApiGateway/Dockerfile
     ports:
       - "8085:8085"
-      - "8086:8086"
     environment:
+      ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8085
-      ASPNETCORE_HTTPS_PORTS: 8086
     depends_on:
+      - keycloak
       - orders
       - payments
       - inventory
 
   orders:
+    image: shopverse-orders
     build:
       context: .
       dockerfile: OrderService/Dockerfile
     ports:
       - "8090:8090"
     environment:
+      ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8090
+    depends_on:
+      - keycloak
 
   payments:
+    image: shopverse-payments
     build:
       context: .
       dockerfile: PaymentService/Dockerfile
     ports:
       - "8092:8092"
     environment:
+      ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8092
+    depends_on:
+      - keycloak
 
   inventory:
+    image: shopverse-inventory
     build:
       context: .
       dockerfile: InventoryService/Dockerfile
     ports:
       - "8094:8094"
     environment:
+      ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8094
+    depends_on:
+      - keycloak

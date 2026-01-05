@@ -16,7 +16,7 @@ builder.Services.AddAuthentication("Bearer")
         options.RequireHttpsMetadata = false;
 
         // Accept tokens issued by localhost (from browser/Postman)
-        // even though we validate against host.docker.internal (from container)
+        // even though we validate against keycloak container or host.docker.internal
         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
             ValidIssuer = "http://localhost:8080/realms/shopverse",
@@ -32,7 +32,7 @@ builder.Services.AddReverseProxy()
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
 {
     app.MapOpenApi().AllowAnonymous();
     //swagger/index.html
@@ -49,7 +49,11 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
+// Skip HTTPS redirection in Docker (HTTP only internally)
+if (!app.Environment.IsEnvironment("Docker"))
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
