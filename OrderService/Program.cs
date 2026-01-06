@@ -1,3 +1,5 @@
+using BuildingBlocks.Messaging.Kafka;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,10 +24,13 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 
+// Add Kafka publisher
+builder.Services.AddKafkaPublisher(builder.Configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {
     app.MapOpenApi();
 }

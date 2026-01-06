@@ -11,6 +11,41 @@ services:
     volumes:
       - ./docker/keycloak/shopverse-realm.json:/opt/keycloak/data/import/shopverse-realm.json:ro
 
+  # Kafka-compatible message broker (lightweight alternative to Apache Kafka)
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
+    container_name: shopverse-redpanda
+    command:
+      - redpanda
+      - start
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+      - --schema-registry-addr internal://0.0.0.0:8081,external://0.0.0.0:18081
+      - --rpc-addr redpanda:33145
+      - --advertise-rpc-addr redpanda:33145
+      - --mode dev-container
+      - --smp 1
+      - --default-log-level=warn
+    ports:
+      - "19092:19092"  # Kafka API (external)
+      - "18082:18082"  # Pandaproxy (HTTP API)
+      - "18081:18081"  # Schema Registry
+
+  # Redpanda Console (UI for viewing topics and messages)
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:v2.5.2
+    container_name: shopverse-redpanda-console
+    ports:
+      - "8088:8080"
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+      REDPANDA_ADMINAPI_ENABLED: "true"
+      REDPANDA_ADMINAPI_URLS: http://redpanda:9644
+    depends_on:
+      - redpanda
+
   apigateway:
     image: shopverse-apigateway
     container_name: ShopVerse
@@ -38,8 +73,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8090
+      Kafka__BootstrapServers: redpanda:9092
     depends_on:
       - keycloak
+      - redpanda
 
   payments:
     image: shopverse-payments
@@ -51,8 +88,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8092
+      Kafka__BootstrapServers: redpanda:9092
     depends_on:
       - keycloak
+      - redpanda
 
   inventory:
     image: shopverse-inventory
