@@ -5,17 +5,22 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8092
-#EXPOSE 8093
 ENV ASPNETCORE_HTTP_PORTS=8092
-#ENV ASPNETCORE_HTTPS_PORTS=8093
 
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+# Copy all project files for restore
 COPY ["PaymentService/PaymentService.csproj", "PaymentService/"]
+COPY ["BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks.Messaging/"]
+COPY ["BuildingBlocks.Observability/BuildingBlocks.Observability.csproj", "BuildingBlocks.Observability/"]
+
 RUN dotnet restore "./PaymentService/PaymentService.csproj"
+
+# Copy all source files
 COPY . .
 WORKDIR "/src/PaymentService"
 RUN dotnet build "./PaymentService.csproj" -c $BUILD_CONFIGURATION -o /app/build

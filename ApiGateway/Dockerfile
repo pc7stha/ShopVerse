@@ -12,8 +12,14 @@ ENV ASPNETCORE_HTTP_PORTS=8085
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+# Copy all project files for restore
 COPY ["ApiGateway/ApiGateway.csproj", "ApiGateway/"]
+COPY ["BuildingBlocks.Observability/BuildingBlocks.Observability.csproj", "BuildingBlocks.Observability/"]
+
 RUN dotnet restore "./ApiGateway/ApiGateway.csproj"
+
+# Copy all source files
 COPY . .
 WORKDIR "/src/ApiGateway"
 RUN dotnet build "./ApiGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build

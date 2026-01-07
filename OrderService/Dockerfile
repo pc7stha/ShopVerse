@@ -14,8 +14,15 @@ ENV ASPNETCORE_HTTP_PORTS=8090
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+# Copy all project files for restore
 COPY ["OrderService/OrderService.csproj", "OrderService/"]
+COPY ["BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks.Messaging/"]
+COPY ["BuildingBlocks.Observability/BuildingBlocks.Observability.csproj", "BuildingBlocks.Observability/"]
+
 RUN dotnet restore "./OrderService/OrderService.csproj"
+
+# Copy all source files
 COPY . .
 WORKDIR "/src/OrderService"
 RUN dotnet build "./OrderService.csproj" -c $BUILD_CONFIGURATION -o /app/build

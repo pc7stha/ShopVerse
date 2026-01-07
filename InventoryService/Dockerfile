@@ -5,17 +5,22 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8094
-#EXPOSE 8095
 ENV ASPNETCORE_HTTP_PORTS=8094
-#ENV ASPNETCORE_HTTPS_PORTS=8095
 
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+# Copy all project files for restore
 COPY ["InventoryService/InventoryService.csproj", "InventoryService/"]
+COPY ["BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks.Messaging/"]
+COPY ["BuildingBlocks.Observability/BuildingBlocks.Observability.csproj", "BuildingBlocks.Observability/"]
+
 RUN dotnet restore "./InventoryService/InventoryService.csproj"
+
+# Copy all source files
 COPY . .
 WORKDIR "/src/InventoryService"
 RUN dotnet build "./InventoryService.csproj" -c $BUILD_CONFIGURATION -o /app/build

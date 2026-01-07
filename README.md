@@ -9,6 +9,57 @@
 
 ---
 
+## 🚀 Quick Start (Run on Any Device)
+
+### Prerequisites
+- **Docker Desktop** - [Download](https://www.docker.com/products/docker-desktop/)
+- That's it! No .NET SDK needed for running.
+
+### One Command to Run Everything
+```bash
+# Clone the repository
+git clone https://github.com/pc7stha/ShopVerse.git
+cd ShopVerse
+
+# Start all services (first run will take a few minutes to build)
+docker compose up --build -d
+
+# Wait 30 seconds for services to initialize, then test
+```
+
+### Test the API
+```bash
+# 1. Get access token from Keycloak
+curl -X POST http://localhost:8080/realms/shopverse/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=shopverse-api" \
+  -d "client_secret=shopverse-api-secret" \
+  -d "grant_type=password" \
+  -d "username=testuser" \
+  -d "password=password"
+
+# 2. Create an order (replace <TOKEN> with access_token from above)
+curl -X POST http://localhost:8085/api/orders \
+  -H "Authorization: Bearer <TOKEN>" \
+  -H "Content-Type: application/json" \
+  -d '{"items":[{"productId":"laptop-001","productName":"Gaming Laptop","quantity":1,"unitPrice":999.99}]}'
+```
+
+### Access the UIs
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **API Gateway** | http://localhost:8085 | Bearer token |
+| **Keycloak Admin** | http://localhost:8080 | admin / admin |
+| **Kafka Messages** | http://localhost:8088 | - |
+| **Centralized Logs** | http://localhost:8089 | admin / Admin123! |
+
+### Stop Everything
+```bash
+docker compose down
+```
+
+---
+
 ## 📖 Table of Contents
 
 - [Overview](#-overview)
@@ -99,15 +150,15 @@ OrderService                PaymentService              InventoryService
 | Docker | Latest | Containerization |
 | Docker Compose | v2 | Container orchestration |
 
-### Infrastructure
+### Infrastructure (All Auto-Configured)
 
-| Technology | Purpose | Port |
-|------------|---------|------|
-| YARP | API Gateway / Reverse Proxy | 8085 |
-| Keycloak | OAuth2/OIDC Authentication | 8080 |
-| Redpanda | Kafka-compatible message broker | 19092 |
-| Redpanda Console | Kafka message viewer | 8088 |
-| Seq | Centralized log aggregation | 8089 |
+| Technology | Purpose | Port | Auto-Setup |
+|------------|---------|------|------------|
+| YARP | API Gateway / Reverse Proxy | 8085 | ✅ |
+| Keycloak | OAuth2/OIDC Authentication | 8080 | ✅ Realm auto-imported |
+| Redpanda | Kafka-compatible message broker | 19092 | ✅ |
+| Redpanda Console | Kafka message viewer | 8088 | ✅ |
+| Seq | Centralized log aggregation | 8089 | ✅ |
 
 ### Libraries
 
@@ -123,47 +174,35 @@ OrderService                PaymentService              InventoryService
 
 ## 🚀 Getting Started
 
-### Prerequisites
+### Option 1: Docker Only (Recommended for Running)
 
+**Prerequisites:** Docker Desktop only
+
+```bash
+# Clone and run
+git clone https://github.com/pc7stha/ShopVerse.git
+cd ShopVerse
+docker compose up --build -d
+
+# Wait 30 seconds for initialization
+```
+
+### Option 2: Development Mode (For Code Changes)
+
+**Prerequisites:**
 - [.NET 10 SDK](https://dotnet.microsoft.com/download)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [Visual Studio 2022+](https://visualstudio.microsoft.com/) or [VS Code](https://code.visualstudio.com/)
 
-### Quick Start
+```bash
+# Clone the repository
+git clone https://github.com/pc7stha/ShopVerse.git
+cd ShopVerse
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/pc7stha/ShopVerse.git
-   cd ShopVerse
-   ```
-
-2. **Start all services**
-   ```bash
-   docker compose up --build
-   ```
-
-3. **Get an access token**
-   ```bash
-   curl -X POST http://localhost:8080/realms/shopverse/protocol/openid-connect/token \
-     -H "Content-Type: application/x-www-form-urlencoded" \
-     -d "client_id=shopverse-api" \
-     -d "client_secret=shopverse-api-secret" \
-     -d "grant_type=password" \
-     -d "username=testuser" \
-     -d "password=password"
-   ```
-
-4. **Create an order (triggers event chain)**
-   ```bash
-   curl -X POST http://localhost:8085/api/orders \
-     -H "Authorization: Bearer <your-token>" \
-     -H "Content-Type: application/json" \
-     -d '{"items":[{"productId":"laptop-001","productName":"Gaming Laptop","quantity":1,"unitPrice":999.99}]}'
-   ```
-
-5. **View the results**
-   - Kafka messages: http://localhost:8088
-   - Centralized logs: http://localhost:8089 (admin / Admin123!)
+# Open in Visual Studio and run docker-compose project
+# OR
+docker compose up --build
+```
 
 ---
 
@@ -205,9 +244,13 @@ Secure your APIs with OAuth2/OIDC using Keycloak.
 
 **Key Concepts:**
 - JWT Bearer authentication
-- Realm and client configuration
+- Realm and client configuration (auto-imported)
 - Token validation
 - Audience verification
+
+**Pre-configured Test User:**
+- Username: `testuser`
+- Password: `password`
 
 **Files to Study:**
 - `docker/keycloak/shopverse-realm.json`
@@ -254,9 +297,9 @@ Implement production-grade logging with correlation across services.
 
 **Log Output Example:**
 ```
-[04:58:41 INF] [OrderService] [0HNIDL5M2IT2J:00000001] Creating order 16f71cc3...
-[04:58:41 INF] [PaymentService] [0HNIDL5M2IT2J:00000001] Processing payment...
-[04:58:41 INF] [InventoryService] [0HNIDL5M2IT2J:00000001] Reserved 1 of laptop-001...
+[05:30:50 INF] [OrderService] [0HNIDLNL5SP3E:00000001] Creating order ea3a5222...
+[05:30:52 INF] [PaymentService] [0HNIDLNL5SP3E:00000001] Processing payment...
+[05:30:51 INF] [InventoryService] [0HNIDLNL5SP3E:00000001] Reserved 1 of laptop-001...
 ```
 
 **Files to Study:**
@@ -270,46 +313,30 @@ Implement production-grade logging with correlation across services.
 
 Handle failures gracefully with retry policies and circuit breakers.
 
-**What You'll Learn:**
-- Retry policies with exponential backoff
-- Circuit breaker pattern (Closed → Open → Half-Open)
-- Timeout policies
-- Fallback strategies
-
 ---
 
 ### 🔜 Module 7: Distributed Caching with Redis
 **Status: Planned**
-
-Improve performance with distributed caching.
 
 ---
 
 ### 🔜 Module 8: Database per Service
 **Status: Planned**
 
-Implement the database-per-service pattern with EF Core.
-
 ---
 
 ### 🔜 Module 9: RabbitMQ Alternative
 **Status: Planned**
-
-Compare Kafka and RabbitMQ messaging patterns.
 
 ---
 
 ### 🔜 Module 10: Code Quality with SonarQube
 **Status: Planned**
 
-Maintain code quality with static analysis.
-
 ---
 
 ### 🔜 Module 11: Distributed Tracing with OpenTelemetry
 **Status: Planned**
-
-Full observability with traces and metrics.
 
 ---
 
@@ -332,40 +359,17 @@ Full observability with traces and metrics.
 ```
 ShopVerse/
 ├── ApiGateway/                    # YARP reverse proxy
-│   ├── Controllers/
-│   ├── Program.cs
-│   ├── appsettings.json
-│   └── Dockerfile
-│
 ├── OrderService/                  # Order management
-│   ├── Controllers/
-│   ├── Models/
-│   └── Dockerfile
-│
 ├── PaymentService/                # Payment processing
-│   ├── Controllers/
-│   ├── Consumers/                 # Kafka consumers
-│   └── Dockerfile
-│
 ├── InventoryService/              # Stock management
-│   ├── Controllers/
-│   ├── Consumers/
-│   └── Dockerfile
-│
 ├── BuildingBlocks.Common/         # Shared utilities
-│
 ├── BuildingBlocks.Messaging/      # Kafka infrastructure
-│   ├── Events/
-│   └── Kafka/
-│
 ├── BuildingBlocks.Observability/  # Logging infrastructure
-│   └── Logging/
-│
 ├── docker/
 │   └── keycloak/
-│       └── shopverse-realm.json
-│
-├── docker-compose.yml
+│       └── shopverse-realm.json   # Pre-configured Keycloak realm
+├── docker-compose.yml             # Main compose file
+├── docker-compose.override.yml    # Dev overrides
 ├── COPILOT_PROGRESS.md           # Detailed progress tracker
 └── README.md
 ```
@@ -374,7 +378,7 @@ ShopVerse/
 
 ## 🧪 Testing Guide
 
-### Test Products (Inventory)
+### Test Products (Pre-configured Inventory)
 
 | Product ID | Name | Initial Stock |
 |------------|------|---------------|
@@ -388,17 +392,17 @@ ShopVerse/
 
 **1. Happy Path - Order with valid product:**
 ```bash
-# Creates order → Payment processed → Stock reserved
+# Results: Order created → Payment processed → Stock reserved
 ```
 
 **2. Payment Failure - Order over $10,000:**
 ```bash
-# Creates order → Payment failed event
+# Results: Order created → Payment failed event
 ```
 
 **3. Stock Failure - Unknown product:**
 ```bash
-# Creates order → Stock failed event
+# Results: Order created → Stock failed event
 ```
 
 ### Viewing Results
@@ -432,6 +436,21 @@ docker logs shopverse-inventory-1 --tail 20
 | Distributed Tracing (OpenTelemetry) | 📋 Planned | - |
 
 For detailed progress, see [COPILOT_PROGRESS.md](COPILOT_PROGRESS.md).
+
+---
+
+## ⚙️ Configuration Notes
+
+### What's Auto-Configured (No Manual Setup Needed)
+- ✅ Keycloak realm with test user and client
+- ✅ Kafka topics (auto-created on first message)
+- ✅ Seq log server
+- ✅ All service connections
+
+### What You Might Want to Change Manually
+- 🔧 **Keycloak passwords** - Edit `docker/keycloak/shopverse-realm.json`
+- 🔧 **Seq admin password** - Edit `docker-compose.yml` → `SEQ_FIRSTRUN_ADMINPASSWORD`
+- 🔧 **Ports** - Edit `docker-compose.yml` if ports conflict
 
 ---
 
