@@ -1,7 +1,11 @@
 using BuildingBlocks.Messaging.Kafka;
+using BuildingBlocks.Observability.Logging;
 using PaymentService.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Serilog
+builder.AddSerilog("PaymentService");
 
 // Add services to the container.
 
@@ -25,11 +29,14 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddAuthorization();
 
-// Add Kafka consumer settings and background service
-builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection(KafkaSettings.SectionName));
+// Add Kafka publisher and consumer
+builder.Services.AddKafkaPublisher(builder.Configuration);
 builder.Services.AddHostedService<OrderCreatedConsumer>();
 
 var app = builder.Build();
+
+// Add Serilog request logging
+app.UseSerilogLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))

@@ -1,6 +1,10 @@
 using BuildingBlocks.Messaging.Kafka;
+using BuildingBlocks.Observability.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Serilog
+builder.AddSerilog("OrderService");
 
 // Add services to the container.
 
@@ -28,6 +32,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddKafkaPublisher(builder.Configuration);
 
 var app = builder.Build();
+
+// Add Serilog request logging
+app.UseSerilogLogging();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))

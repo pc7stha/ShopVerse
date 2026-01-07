@@ -32,6 +32,7 @@ services:
       - "19092:19092"  # Kafka API (external)
       - "18082:18082"  # Pandaproxy (HTTP API)
       - "18081:18081"  # Schema Registry
+      - "9644:9644"    # Admin API
 
   # Redpanda Console (UI for viewing topics and messages)
   redpanda-console:
@@ -41,10 +42,23 @@ services:
       - "8088:8080"
     environment:
       KAFKA_BROKERS: redpanda:9092
-      REDPANDA_ADMINAPI_ENABLED: "true"
-      REDPANDA_ADMINAPI_URLS: http://redpanda:9644
+      REDPANDA_ADMINAPI_ENABLED: "false"
+    restart: on-failure
     depends_on:
       - redpanda
+
+  # Seq - Centralized structured log server
+  seq:
+    image: datalust/seq:latest
+    container_name: shopverse-seq
+    ports:
+      - "5341:5341"  # Ingestion API
+      - "8089:80"    # Web UI
+    environment:
+      ACCEPT_EULA: "Y"
+      SEQ_FIRSTRUN_ADMINPASSWORD: "Admin123!"
+    volumes:
+      - seq-data:/data
 
   apigateway:
     image: shopverse-apigateway
@@ -57,8 +71,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8085
+      Seq__ServerUrl: http://seq:5341
     depends_on:
       - keycloak
+      - seq
       - orders
       - payments
       - inventory
@@ -74,9 +90,11 @@ services:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8090
       Kafka__BootstrapServers: redpanda:9092
+      Seq__ServerUrl: http://seq:5341
     depends_on:
       - keycloak
       - redpanda
+      - seq
 
   payments:
     image: shopverse-payments
@@ -89,9 +107,11 @@ services:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8092
       Kafka__BootstrapServers: redpanda:9092
+      Seq__ServerUrl: http://seq:5341
     depends_on:
       - keycloak
       - redpanda
+      - seq
 
   inventory:
     image: shopverse-inventory
@@ -103,5 +123,12 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_HTTP_PORTS: 8094
+      Kafka__BootstrapServers: redpanda:9092
+      Seq__ServerUrl: http://seq:5341
     depends_on:
       - keycloak
+      - redpanda
+      - seq
+
+volumes:
+  seq-data:
