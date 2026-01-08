@@ -44,7 +44,12 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
     app.MapOpenApi();
 }
 
-//app.UseHttpsRedirection();
+// Skip HTTPS redirection in Docker (HTTP only internally)
+if (!app.Environment.IsEnvironment("Docker"))
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 

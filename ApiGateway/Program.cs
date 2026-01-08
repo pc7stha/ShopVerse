@@ -39,7 +39,7 @@ var app = builder.Build();
 app.UseSerilogLogging();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Docker")
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {
     app.MapOpenApi().AllowAnonymous();
     //swagger/index.html
